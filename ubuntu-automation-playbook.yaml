@@ -1,0 +1,107 @@
+---
+- name: Setup development environment
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Java and Maven
+      apt:
+        name:
+          - openjdk-21-jdk
+          - maven
+        state: present
+
+    - name: Install wget and gpg
+      apt:
+        name:
+          - wget
+          - gpg
+        state: present
+
+    - name: Download Microsoft GPG key
+      get_url:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        dest: /tmp/microsoft.asc
+
+    - name: Import Microsoft GPG key
+      ansible.builtin.shell: cat /tmp/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
+      args:
+        creates: /etc/apt/keyrings/packages.microsoft.gpg
+
+    - name: Add VS Code repository
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+        state: present
+        filename: vscode
+
+    - name: Install apt-transport-https
+      apt:
+        name: apt-transport-https
+        state: present
+
+    - name: Install VS Code
+      apt:
+        name: code
+        state: present
+        update_cache: yes
+
+    - name: Add Mozilla Team PPA
+      ansible.builtin.apt_repository:
+        repo: ppa:mozillateam/ppa
+        state: present
+
+    - name: Configure Mozilla Firefox preferences
+      ansible.builtin.copy:
+        dest: /etc/apt/preferences.d/mozilla-firefox
+        content: |
+          Package: *
+          Pin: release o=LP-PPA-mozillateam
+          Pin-Priority: 1001
+
+          Package: firefox
+          Pin: version 1:1snap*
+          Pin-Priority: -1
+
+    - name: Stop and disable Firefox snap mount
+      systemd:
+        name: var-snap-firefox-common-host\x2dhunspell.mount
+        state: stopped
+        enabled: no
+
+    - name: Remove Firefox snap
+      community.general.snap:
+        name: firefox
+        state: absent
+
+    - name: Remove Firefox
+      apt:
+        name: firefox
+        state: absent
+
+    - name: Install Firefox
+      apt:
+        name: firefox
+        state: present
+
+    - name: Configure Firefox unattended upgrades
+      ansible.builtin.lineinfile:
+        path: /etc/apt/apt.conf.d/51unattended-upgrades-firefox
+        line: 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";'
+        create: yes
+
+    - name: Download Google Chrome
+      get_url:
+        url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        dest: /tmp/google-chrome-stable_current_amd64.deb
+
+    - name: Install Google Chrome
+      apt:
+        deb: /tmp/google-chrome-stable_current_amd64.deb
+
+    - name: Remove Google Chrome installer
+      file:
+        path: /tmp/google-chrome-stable_current_amd64.deb
+        state: absent
