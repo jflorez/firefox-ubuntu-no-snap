@@ -1,0 +1,123 @@
+---
+- name: Setup development environment
+  hosts: localhost
+  become: yes
+  vars:
+    pre_requisite_packages:
+      - openjdk-21-jdk
+      - maven
+      - wget
+      - gpg
+      - apt-transport-https
+
+  tasks:
+
+    - name: Manage unattended-upgrades service
+      block:
+        - name: Stop unattended-upgrades service
+          service:
+            name: unattended-upgrades
+            state: stopped
+
+        - name: Uninstall unattended-upgrades service
+          apt:
+            name: unattended-upgrades
+            state: absent
+    
+    - name: Install JDK 21 and pre-requisite packages
+      apt:
+        name: "{{ pre_requisite_packages }}"
+        state: present
+        update_cache: yes
+
+    - name: Remove VS Code Snap installation
+      block:
+
+        - name: Uninstall VS Code snap
+          community.general.snap:
+            name: code
+            state: absent
+          register: snap_uninstall_result
+
+        - name: Remove VS Code
+          apt:
+            name: code
+            state: absent
+          when: snap_uninstall_result is changed
+
+    - name: Install VS Code
+      block:
+        - name: Download Microsoft GPG key
+          get_url:
+            url: https://packages.microsoft.com/keys/microsoft.asc
+            dest: /tmp/microsoft.asc
+
+        - name: Import Microsoft GPG key
+          ansible.builtin.shell: cat /tmp/microsoft.asc | gpg --dearmor > /etc/apt/keyrings/packages.microsoft.gpg
+          args:
+            creates: /etc/apt/keyrings/packages.microsoft.gpg
+
+        - name: Add VS Code repository
+          ansible.builtin.apt_repository:
+            repo: deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main
+            state: present
+            filename: vscode
+            update_cache: yes
+
+        - name: Install VS Code
+          apt:
+            name: code
+            state: present
+    
+    - name: Remove Firefox Snap installation
+      block:
+        - name: Stop and disable Firefox snap mount
+          systemd:
+            name: var-snap-firefox-common-host-hunspell.mount
+            state: stopped
+            enabled: no
+
+        - name: Uninstall Firefox snap
+          community.general.snap:
+            name: firefox
+            state: absent
+
+        - name: Remove Firefox
+          apt:
+            name: firefox
+            state: absent
+
+    - name: Install Firefox from Mozilla Team PPA
+      block:
+        - name: Add Mozilla Team PPA
+          ansible.builtin.apt_repository:
+            repo: ppa:mozillateam/ppa
+            state: present
+
+        - name: Configure Mozilla Firefox PPA over Snap preferences
+          ansible.builtin.copy:
+            dest: /etc/apt/preferences.d/mozilla-firefox
+            content: |
+              Package: *
+              Pin: release o=LP-PPA-mozillateam
+              Pin-Priority: 1001
+
+              Package: firefox
+              Pin: version 1:1snap*
+              Pin-Priority: -1
+
+        - name: Install Firefox from Mozilla Team PPA
+          apt:
+            name: firefox
+            state: present
+
+        - name: Configure Firefox unattended upgrades
+          ansible.builtin.lineinfile:
+            path: /etc/apt/apt.conf.d/51unattended-upgrades-firefox
+            line: 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";'
+            create: yes
+
+    - name: Install Google Chrome
+      apt:
+        deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        state: present
