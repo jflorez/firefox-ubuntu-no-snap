@@ -11,13 +11,19 @@
       - apt-transport-https
 
   tasks:
-    - name: Stop unattended-upgrades service
-      systemd:
-        name: unattended-upgrades
-        state: stopped
-        enabled: no
-    
 
+    - name: Manage unattended-upgrades service
+      block:
+        - name: Stop unattended-upgrades service
+          service:
+            name: unattended-upgrades
+            state: stopped
+
+        - name: Uninstall unattended-upgrades service
+          apt:
+            name: unattended-upgrades
+            state: absent
+    
     - name: Install JDK 21 and pre-requisite packages
       apt:
         name: "{{ pre_requisite_packages }}"
@@ -113,9 +119,3 @@
       apt:
         deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         state: present
-
-    - name: Re-enable unattended upgrades
-      ansible.builtin.systemd:
-        name: unattended-upgrades
-        state: started
-        enabled: yes
