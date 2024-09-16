@@ -37,11 +37,13 @@
           community.general.snap:
             name: code
             state: absent
+          register: snap_uninstall_result
 
         - name: Remove VS Code
           apt:
             name: code
             state: absent
+          when: snap_uninstall_result is changed
 
     - name: Install VS Code
       block:
