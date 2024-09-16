@@ -16,12 +16,31 @@
         name: unattended-upgrades
         state: stopped
         enabled: no
+    
 
     - name: Install JDK 21 and pre-requisite packages
       apt:
         name: "{{ pre_requisite_packages }}"
         state: present
         update_cache: yes
+
+    - name: Remove VS Code Snap installation
+      block:
+        - name: Stop and disable VS Code snap mount
+          systemd:
+            name: var-snap-code-common-host\x2dcode.mount
+            state: stopped
+            enabled: no
+
+        - name: Uninstall VS Code snap
+          community.general.snap:
+            name: code
+            state: absent
+
+        - name: Remove VS Code
+          apt:
+            name: code
+            state: absent
 
     - name: Install VS Code
       block:
