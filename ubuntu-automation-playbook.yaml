@@ -26,11 +26,6 @@
 
     - name: Remove VS Code Snap installation
       block:
-        - name: Stop and disable VS Code snap mount
-          systemd:
-            name: var-snap-code-common-host\x2dcode.mount
-            state: stopped
-            enabled: no
 
         - name: Uninstall VS Code snap
           community.general.snap:
