@@ -81,11 +81,13 @@
           community.general.snap:
             name: firefox
             state: absent
+          register: firefox_snap_uninstall_result
 
         - name: Remove Firefox
           apt:
             name: firefox
             state: absent
+          when: firefox_snap_uninstall_result is changed
 
     - name: Install Firefox from Mozilla Team PPA
       block:
