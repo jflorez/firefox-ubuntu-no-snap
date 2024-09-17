@@ -72,14 +72,14 @@
     - name: Remove Firefox Snap installation
       block:
 
-        - name: Stop and disable Firefox snap mount Ubuntu 24.04
+        - name: Stop and disable Firefox snap mount Ubuntu 24.x
           systemd:
             name: var-snap-firefox-common-host-hunspell.mount
             state: stopped
             enabled: no
           when: ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
 
-        - name: Stop and disable Firefox snap mount Ubuntu 22.04
+        - name: Stop and disable Firefox snap mount Ubuntu 22.x
           systemd:
             name: var-snap-firefox-common-host\x2dhunspell.mount
             state: stopped
