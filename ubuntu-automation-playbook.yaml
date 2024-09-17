@@ -77,14 +77,14 @@
             name: var-snap-firefox-common-host-hunspell.mount
             state: stopped
             enabled: no
-          when: ansible_distribution_version == '24.04'
+          when: ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
 
-        - name: Stop and disable Firefox snap mount Ubuntu 22
+        - name: Stop and disable Firefox snap mount Ubuntu 22.04
           systemd:
             name: var-snap-firefox-common-host\x2dhunspell.mount
             state: stopped
             enabled: no
-          when: ansible_distribution_version == '22.04'
+          when: ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
 
         - name: Uninstall Firefox snap
           community.general.snap:
