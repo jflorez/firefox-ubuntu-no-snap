@@ -8,5 +8,6 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "ubuntu-automation-playbook.yaml"
+    ansible.limit = "all,localhost"
   end
 end
