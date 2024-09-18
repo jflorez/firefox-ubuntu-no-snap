@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/jammy64"
+  config.vm.box = "gusztavvargadr/ubuntu-desktop-2204-lts"
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "4096"
