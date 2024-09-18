@@ -9,6 +9,7 @@
       - wget
       - gpg
       - apt-transport-https
+      - git
 
   tasks:
 
