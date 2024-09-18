@@ -19,11 +19,13 @@
           service:
             name: unattended-upgrades
             state: stopped
+          ignore_errors: yes
 
         - name: Uninstall unattended-upgrades service
           apt:
             name: unattended-upgrades
             state: absent
+          ignore_errors: yes
     
     - name: Install JDK 21 and pre-requisite packages
       apt:
