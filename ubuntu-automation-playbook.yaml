@@ -75,10 +75,10 @@
       block:
       
         - name: Uninstall Firefox snap
-            community.general.snap:
-              name: firefox
-              state: absent
-            register: firefox_snap_uninstall_result
+          community.general.snap:
+            name: firefox
+            state: absent
+          register: firefox_snap_uninstall_result
 
         - name: Stop and disable Firefox snap mount Ubuntu 24.x
           systemd:
