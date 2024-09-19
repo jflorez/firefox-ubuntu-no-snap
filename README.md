@@ -1,6 +1,10 @@
 # Ubuntu Automation with Vagrant and Ansible
 
-This project automates the setup of an Ubuntu virtual machine using Vagrant and Ansible. It provisions the VM with essential software like VS Code, Firefox, and Google Chrome.
+This project is designed to simplify the setup of an Ubuntu virtual machine by using Vagrant and Ansible. Vagrant is a tool for building and managing virtual machine environments, while Ansible is an automation tool that handles software provisioning and configuration management.
+
+The main goal of this project is to automatically install and configure essential software and tools needed for web automation tasks on the virtual machine. This includes setting up development environments with popular applications like Visual Studio Code (VS Code), Firefox, and Google Chrome. Additionally, the Ansible playbook ensures that all necessary dependencies and configurations are in place for smooth automation workflows.
+
+The Vagrant configuration in this project uses only VirtualBox as a provider, ensuring compatibility and ease of use. For those who prefer not to use Vagrant or VirtualBox, the Ansible playbook can also be run manually on an existing Ubuntu 22.04 or 24.04 VM to achieve the same setup.
 
 ## Prerequisites
 
@@ -28,6 +32,10 @@ This project automates the setup of an Ubuntu virtual machine using Vagrant and 
 ## Provisioning Details
 
 The provisioning is handled by Ansible (local) through the `ubuntu-automation-playbook.yaml` playbook. Below are the key tasks performed:
+
+### JDK 21
+
+- Installs JDK 21 and other pre-requisite packages.
 
 ### VS Code
 
