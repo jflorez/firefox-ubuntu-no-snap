@@ -73,39 +73,32 @@
     
     - name: Remove Firefox Snap installation
       block:
-
-        - name: Check if Firefox snap is installed
-          community.general.snap:
-            name: firefox
-            state: present
-          register: firefox_snap_check_result
+      
+        - name: Uninstall Firefox snap
+            community.general.snap:
+              name: firefox
+              state: absent
+            register: firefox_snap_uninstall_result
 
         - name: Stop and disable Firefox snap mount Ubuntu 24.x
           systemd:
             name: snap-firefox-4793.mount
             state: stopped
             enabled: no
-          when: firefox_snap_check_result is succeeded and ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
+          when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
 
         - name: Stop and disable Firefox snap mount Ubuntu 22.x
           systemd:
             name: var-snap-firefox-common-host\x2dhunspell.mount
             state: stopped
             enabled: no
-          when: firefox_snap_check_result is succeeded and ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
-
-        - name: Uninstall Firefox snap
-          community.general.snap:
-            name: firefox
-            state: absent
-          register: firefox_snap_uninstall_result
-          when: firefox_snap_check_result is succeeded
+          when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
 
         - name: Remove Firefox
           apt:
             name: firefox
             state: absent
-          when: firefox_snap_uninstall_result is changed and firefox_snap_check_result is succeeded
+          when: firefox_snap_uninstall_result is changed
 
     - name: Install Firefox from Mozilla Team PPA
       block:
