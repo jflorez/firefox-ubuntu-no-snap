@@ -125,8 +125,6 @@
           apt:
             name: firefox
             state: present
-          args:
-            force: yes
 
         - name: Configure Firefox unattended upgrades
           ansible.builtin.lineinfile:
