@@ -40,8 +40,8 @@ To get a local copy up and running, follow these simple steps.
 
 ### Clone the Repository
    ```sh
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/jflorez/firefox-ubuntu-no-snap.git
+   cd firefox-ubuntu-no-snap
    ```
 
 ### Start the Vagrant VM
@@ -64,8 +64,8 @@ If you prefer to run the playbook inside an Ubuntu 22.04 or 24.04 VM without usi
 
 ### Clone the repository
    ```sh
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone https://github.com/jflorez/firefox-ubuntu-no-snap.git
+   cd firefox-ubuntu-no-snap
    ```
 
 ### Run the playbook
