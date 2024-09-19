@@ -25,7 +25,6 @@
           apt:
             name: unattended-upgrades
             state: absent
-          ignore_errors: yes
     
     - name: Install JDK 21 and pre-requisite packages
       apt:
@@ -75,31 +74,38 @@
     - name: Remove Firefox Snap installation
       block:
 
+        - name: Check if Firefox snap is installed
+          community.general.snap:
+            name: firefox
+            state: present
+          register: firefox_snap_check_result
+
         - name: Stop and disable Firefox snap mount Ubuntu 24.x
           systemd:
             name: snap-firefox-4793.mount
             state: stopped
             enabled: no
-          when: ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
+          when: firefox_snap_check_result is succeeded and ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
 
         - name: Stop and disable Firefox snap mount Ubuntu 22.x
           systemd:
             name: var-snap-firefox-common-host\x2dhunspell.mount
             state: stopped
             enabled: no
-          when: ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
+          when: firefox_snap_check_result is succeeded and ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
 
         - name: Uninstall Firefox snap
           community.general.snap:
             name: firefox
             state: absent
           register: firefox_snap_uninstall_result
+          when: firefox_snap_check_result is succeeded
 
         - name: Remove Firefox
           apt:
             name: firefox
             state: absent
-          when: firefox_snap_uninstall_result is changed
+          when: firefox_snap_uninstall_result is changed and firefox_snap_check_result is succeeded
 
     - name: Install Firefox from Mozilla Team PPA
       block:
