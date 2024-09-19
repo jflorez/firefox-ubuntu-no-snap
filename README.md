@@ -1,4 +1,4 @@
-# Ubuntu Automation with Vagrant and Ansible
+# Ubuntu Web Automation with Vagrant and Ansible
 
 Welcome to the Ubuntu Web Automation project! This repository aims to simplify the setup of an Ubuntu virtual machine using Vagrant and Ansible. Vagrant is a tool for building and managing virtual machine environments, while Ansible is an automation tool that handles software provisioning and configuration management.
 
