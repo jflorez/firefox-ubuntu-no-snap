@@ -86,6 +86,7 @@
             state: stopped
             enabled: no
           when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
+          ignore_errors: yes
 
         - name: Stop and disable Firefox snap mount Ubuntu 22.x
           systemd:
@@ -93,6 +94,7 @@
             state: stopped
             enabled: no
           when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
+          ignore_errors: yes
 
         - name: Remove Firefox
           apt:
