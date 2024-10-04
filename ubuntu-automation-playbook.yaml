@@ -20,7 +20,7 @@
             name: unattended-upgrades
             state: stopped
           ignore_errors: yes
-          
+
         - name: Wait for lock-frontend to be released
           shell: |
             while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
@@ -33,16 +33,18 @@
           delay: 5
 
         - name: Uninstall unattended-upgrades service
-          apt:
+          ansible.builtin.apt:
             name: unattended-upgrades
             state: absent
           ignore_errors: yes
 
     - name: Install JDK 21 and pre-requisite packages
-      apt:
+      ansible.builtin.apt:
         name: "{{ pre_requisite_packages }}"
         state: present
         update_cache: yes
+
+        
 
     - name: Remove VS Code Snap installation
       block:
@@ -54,7 +56,7 @@
           register: snap_uninstall_result
 
         - name: Remove VS Code
-          apt:
+          ansible.builtin.apt:
             name: code
             state: absent
           when: snap_uninstall_result is changed
@@ -79,7 +81,7 @@
             update_cache: yes
 
         - name: Install VS Code
-          apt:
+          ansible.builtin.apt:
             name: code
             state: present
     
@@ -109,7 +111,7 @@
           ignore_errors: yes
 
         - name: Remove Firefox
-          apt:
+          ansible.builtin.apt:
             name: firefox
             state: absent
           when: firefox_snap_uninstall_result is changed
@@ -134,7 +136,7 @@
               Pin-Priority: -1
 
         - name: Install Firefox from Mozilla Team PPA
-          apt:
+          ansible.builtin.apt:
             name: firefox
             state: present
 
@@ -145,6 +147,6 @@
             create: yes
 
     - name: Install Google Chrome
-      apt:
+      ansible.builtin.apt:
         deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         state: present
