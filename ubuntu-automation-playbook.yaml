@@ -31,19 +31,6 @@
             state: absent
           ignore_errors: yes
 
-      rescue:
-        - name: Wait for dpkg lock to be released
-          wait_for:
-            path: /var/lib/dpkg/lock-frontend
-            state: absent
-          retries: 10
-          delay: 5
-
-        - name: Retry uninstalling unattended-upgrades service
-          apt:
-            name: unattended-upgrades
-            state: absent
-          ignore_errors: yes
     - name: Install JDK 21 and pre-requisite packages
       apt:
         name: "{{ pre_requisite_packages }}"
