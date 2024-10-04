@@ -21,10 +21,6 @@
             state: stopped
           ignore_errors: yes
 
-        - name: Force release of dpkg lock
-          command: rm /var/lib/dpkg/lock-frontend
-          ignore_errors: yes
-
         - name: Uninstall unattended-upgrades service
           apt:
             name: unattended-upgrades
