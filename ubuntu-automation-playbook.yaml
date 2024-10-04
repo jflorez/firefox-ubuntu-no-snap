@@ -20,7 +20,17 @@
             name: unattended-upgrades
             state: stopped
           ignore_errors: yes
-
+        - name: Wait for lock-frontend to be released
+          shell: |
+            while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
+              echo "Waiting for lock-frontend to be released..."
+              sleep 5
+            done
+          register: lock_wait_result
+          until: lock_wait_result.rc == 0
+          retries: 12
+          delay: 5
+          
         - name: Uninstall unattended-upgrades service
           apt:
             name: unattended-upgrades
