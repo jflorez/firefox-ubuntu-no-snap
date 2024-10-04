@@ -25,7 +25,8 @@
           apt:
             name: unattended-upgrades
             state: absent
-    
+        ignore_errors: yes
+        
     - name: Install JDK 21 and pre-requisite packages
       apt:
         name: "{{ pre_requisite_packages }}"
