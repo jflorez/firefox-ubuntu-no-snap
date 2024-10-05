@@ -28,6 +28,10 @@
           ignore_errors: yes
           when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '22'
 
+    - name: Kill apt-get process forcefully
+      ansible.builtin.shell: pkill -9 apt-get
+      ignore_errors: yes
+
     - name: Install JDK 21 and pre-requisite packages
       ansible.builtin.apt:
         name: "{{ pre_requisite_packages }}"
