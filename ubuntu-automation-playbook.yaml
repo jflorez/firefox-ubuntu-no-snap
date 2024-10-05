@@ -35,6 +35,7 @@
 
     - name: Uninstall unattended-upgrades service
       ansible.builtin.apt:
+        force_apt_get: yes
         name: unattended-upgrades
         state: absent
       ignore_errors: yes
@@ -55,6 +56,7 @@
 
     - name: Install JDK 21 and pre-requisite packages
       ansible.builtin.apt:
+        force_apt_get: yes
         name: "{{ pre_requisite_packages }}"
         state: present
         update_cache: yes
@@ -70,6 +72,7 @@
 
         - name: Remove VS Code
           ansible.builtin.apt:
+            force_apt_get: yes
             name: code
             state: absent
           when: snap_uninstall_result is changed
@@ -95,6 +98,7 @@
 
         - name: Install VS Code
           ansible.builtin.apt:
+            force_apt_get: yes
             name: code
             state: present
     
@@ -125,6 +129,7 @@
 
         - name: Remove Firefox
           ansible.builtin.apt:
+            force_apt_get: yes
             name: firefox
             state: absent
           when: firefox_snap_uninstall_result is changed
@@ -150,6 +155,7 @@
 
         - name: Install Firefox from Mozilla Team PPA
           ansible.builtin.apt:
+            force_apt_get: yes
             name: firefox
             state: present
 
@@ -161,5 +167,6 @@
 
     - name: Install Google Chrome
       ansible.builtin.apt:
+        force_apt_get: yes
         deb: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         state: present
