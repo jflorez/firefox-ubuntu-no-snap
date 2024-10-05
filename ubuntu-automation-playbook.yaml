@@ -20,25 +20,13 @@
             name: unattended-upgrades
             state: stopped
           ignore_errors: yes
-        - name: Wait for 10 seconds
-          ansible.builtin.pause:
-            seconds: 10
-        # - name: Wait for lock-frontend to be released
-        #   shell: |
-        #     while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
-        #       echo "Waiting for lock-frontend to be released..."
-        #       sleep 5
-        #     done
-        #   register: lock_wait_result
-        #   until: lock_wait_result.rc == 0
-        #   retries: 12
-        #   delay: 5
 
         - name: Uninstall unattended-upgrades service
           ansible.builtin.apt:
             name: unattended-upgrades
             state: absent
           ignore_errors: yes
+          when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '22'
 
     - name: Install JDK 21 and pre-requisite packages
       ansible.builtin.apt:
