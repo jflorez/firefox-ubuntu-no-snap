@@ -19,26 +19,6 @@
         state: stopped
       ignore_errors: yes
 
-    - name: Update apt cache
-      ansible.builtin.apt:
-        update_cache: yes
-        force_apt_get: yes
-      ignore_errors: yes
-
-    - name: wait until apt lock is released
-      shell: lsof -w /var/lib/apt/lists/lock | wc -l
-      register: lock
-      until: lock.stdout == "0"
-      retries: 10
-      delay: 10
-
-    - name: wait until apt lock_frontend is released
-      shell: lsof -w /var/lib/dpkg/lock-frontend | wc -l
-      register: lock_frontend
-      until: lock_frontend.stdout == "0"
-      retries: 10
-      delay: 10
-
     - name: Uninstall unattended-upgrades service
       ansible.builtin.apt:
         force_apt_get: yes
@@ -103,13 +83,13 @@
             state: absent
           register: firefox_snap_uninstall_result
 
-        - name: Stop and disable Firefox snap mount Ubuntu 24.x
-          systemd:
-            name: snap-firefox-4793.mount
-            state: stopped
-            enabled: no
-          when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
-          ignore_errors: yes
+        # - name: Stop and disable Firefox snap mount Ubuntu 24.x
+        #   systemd:
+        #     name: snap-firefox-4793.mount
+        #     state: stopped
+        #     enabled: no
+        #   when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('24', '>=') and ansible_distribution_version is version('25', '<')
+        #   ignore_errors: yes
 
         - name: Stop and disable Firefox snap mount Ubuntu 22.x
           systemd:
