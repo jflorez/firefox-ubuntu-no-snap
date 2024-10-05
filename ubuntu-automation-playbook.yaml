@@ -13,24 +13,45 @@
 
   tasks:
 
-    - name: Manage unattended-upgrades service
-      block:
-        - name: Stop unattended-upgrades service
-          service:
-            name: unattended-upgrades
-            state: stopped
-          ignore_errors: yes
-
-        - name: Uninstall unattended-upgrades service
-          ansible.builtin.apt:
-            name: unattended-upgrades
-            state: absent
-          ignore_errors: yes
-          when: ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '22'
-
-    - name: Kill apt-get process forcefully
-      ansible.builtin.shell: pkill -9 apt-get
+    - name: Stop unattended-upgrades service
+      service:
+        name: unattended-upgrades
+        state: stopped
       ignore_errors: yes
+
+    - name: wait until apt lock is released
+      shell: lsof -w /var/lib/apt/lists/lock | wc -l
+      register: lock
+      until: lock.stdout == "0"
+      retries: 10
+      delay: 10
+
+    - name: wait until apt lock_frontend is released
+      shell: lsof -w /var/lib/dpkg/lock-frontend | wc -l
+      register: lock_frontend
+      until: lock_frontend.stdout == "0"
+      retries: 10
+      delay: 10
+
+    - name: Uninstall unattended-upgrades service
+      ansible.builtin.apt:
+        name: unattended-upgrades
+        state: absent
+      ignore_errors: yes
+
+    - name: wait until apt lock is released
+      shell: lsof -w /var/lib/apt/lists/lock | wc -l
+      register: lock
+      until: lock.stdout == "0"
+      retries: 10
+      delay: 10
+
+    - name: wait until apt lock_frontend is released
+      shell: lsof -w /var/lib/dpkg/lock-frontend | wc -l
+      register: lock_frontend
+      until: lock_frontend.stdout == "0"
+      retries: 10
+      delay: 10
 
     - name: Install JDK 21 and pre-requisite packages
       ansible.builtin.apt:
