@@ -20,7 +20,9 @@
             name: unattended-upgrades
             state: stopped
           ignore_errors: yes
-
+        - name: Wait for 10 seconds
+          ansible.builtin.pause:
+            seconds: 10
         # - name: Wait for lock-frontend to be released
         #   shell: |
         #     while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do
