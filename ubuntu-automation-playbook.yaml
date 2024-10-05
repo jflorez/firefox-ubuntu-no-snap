@@ -98,6 +98,7 @@
             state: stopped
             enabled: no
           when: firefox_snap_uninstall_result is changed and ansible_distribution_version is version('22', '>=') and ansible_distribution_version is version('23', '<')
+          failed_when: false
           ignore_errors: yes
 
         - name: Remove Firefox
