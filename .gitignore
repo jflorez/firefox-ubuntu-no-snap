@@ -1,0 +1,11 @@
+!.gitignore
+# Vagrant specific
+.vagrant/
+
+# Ansible specific
+*.retry
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
